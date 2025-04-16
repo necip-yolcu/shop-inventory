@@ -1,5 +1,4 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Catalog } from "../catalog/catalog.entity";
 
 @Entity()
 export class Product {
@@ -12,6 +11,11 @@ export class Product {
     @Column('decimal')
     price: number;
 
-    @ManyToOne(() => Catalog, catalog => catalog.products, {nullable: true, onDelete: 'SET NULL'})
-    catalog: Catalog;
+    //@ManyToOne(() => Catalog, catalog => catalog.products, {nullable: true, onDelete: 'SET NULL'})
+    @ManyToOne(
+        () => require('../catalog/catalog.entity').Catalog,
+        (catalog: any) => catalog.products,
+        { nullable: true, onDelete: 'SET NULL' }
+    )
+    catalog: any;
 }
