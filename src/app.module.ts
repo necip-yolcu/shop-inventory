@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
-      entities: [__dirname + '/**/*.entity.ts'],
+      entities: [__dirname + '/**/*.entity.{ts,js}'],
       synchronize: true,
     }),
     CatalogModule, ProductModule]
