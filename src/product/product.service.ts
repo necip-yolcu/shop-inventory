@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './product.entity';
 import { Repository } from 'typeorm';
@@ -28,7 +28,7 @@ export class ProductService {
     async createProduct(dto: CreateProductDto): Promise<Product> {
         const catalog = await this.catalogRepository.findOne({ where: { id: dto.catalogId } });
         if (!catalog) {
-            throw new Error('Catalog not found');
+            throw new HttpException('Catalog not found', HttpStatus.NOT_FOUND);
         }
 
         const product = this.productRepository.create({
@@ -40,18 +40,18 @@ export class ProductService {
     }
 
     async deleteProduct(productId: number) {
-        return await this.productRepository.delete(productId);
+        return this.productRepository.delete(productId);
     }
 
     async assignCatalogToProduct(id: number, catalogId: number) {
         const product = await this.productRepository.findOne({ where: { id }, relations: ['catalog'] });
         if (!product) {
-            throw new Error('Product not found');
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
         }
 
         const catalog = await this.catalogRepository.findOne({ where: { id: catalogId } });
         if (!catalog) {
-            throw new Error('Catalog not found');
+            throw new HttpException('Catalog not found', HttpStatus.NOT_FOUND);
         }
 
         product.catalog = catalog;
@@ -61,7 +61,7 @@ export class ProductService {
     async removeCatalogFromProduct(id: number): Promise<Product> {
         const product = await this.productRepository.findOne({ where: { id } });
         if (!product) {
-            throw new Error('Product not found');
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
         }
         product.catalog = null;
         return await this.productRepository.save(product);
