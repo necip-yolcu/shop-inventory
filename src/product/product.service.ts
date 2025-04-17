@@ -4,6 +4,7 @@ import { Product } from './product.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Catalog } from 'src/catalog/catalog.entity';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -37,6 +38,23 @@ export class ProductService {
             catalog: catalog
         });
         return await this.productRepository.save(product);
+    }
+
+    async updateProduct(id: number, dto: UpdateProductDto): Promise<Product> {
+        const product = await this.productRepository.findOne({ where: { id }, relations: ['catalog'] });
+        if (!product) {
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        }
+        if (dto.name) product.name = dto.name;
+        if (dto.price) product.price = dto.price;
+        if (dto.catalogId) {
+            const catalog = await this.catalogRepository.findOne({ where: { id: dto.catalogId } });
+            if (!catalog) {
+                throw new HttpException('Catalog not found', HttpStatus.NOT_FOUND);
+            }
+            product.catalog = catalog;
+        }
+        return this.productRepository.save(product);
     }
 
     async deleteProduct(productId: number) {

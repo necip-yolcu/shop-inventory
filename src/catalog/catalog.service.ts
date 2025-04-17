@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Catalog } from './catalog.entity';
 import { CreateCatalogDto } from './dto/create-catalog.dto';
+import { UpdateCatalogDto } from './dto/update-catalog.dto';
 
 @Injectable()
 export class CatalogService {
@@ -22,6 +23,19 @@ export class CatalogService {
         }
         const newCatalog = this.catalogRepository.create(catalog);
         return await this.catalogRepository.save(newCatalog);
+    }
+
+    async updateCatalog(id: number, updateCatalogDto: UpdateCatalogDto): Promise<Catalog> {
+        const catalog = await this.catalogRepository.findOne({ where: { id } });
+        if (!catalog) {
+            throw new HttpException('Catalog not found', HttpStatus.NOT_FOUND); // 404 Not Found
+        }
+
+        if (updateCatalogDto.name) {
+            catalog.name = updateCatalogDto.name;
+        }
+
+        return await this.catalogRepository.save(catalog);
     }
 
     async remove(id: number) {

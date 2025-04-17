@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { ProductService } from './product.service';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @ApiTags('products')
 @Controller('product')
@@ -26,6 +27,14 @@ export class ProductController {
     @ApiBody({type: CreateProductDto})
     create(@Body() dto: CreateProductDto) {
         return this.productService.createProduct(dto);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Update a product by ID' })
+    @ApiParam({ name: 'id', type: Number })
+    @ApiBody({ type: UpdateProductDto })
+    async update(@Param('id') id: number, @Body() dto: UpdateProductDto) {
+        return this.productService.updateProduct(Number(id), dto);
     }
 
     @Delete(':id')

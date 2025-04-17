@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 import { CreateCatalogDto } from './dto/create-catalog.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { UpdateCatalogDto } from './dto/update-catalog.dto';
 
 @ApiTags('catalogs') 
 @Controller('catalog')
@@ -19,6 +20,14 @@ export class CatalogController {
     @ApiBody({ type: CreateCatalogDto })
     create(@Body() dto: CreateCatalogDto) {
         return this.catalogService.create(dto);
+    }
+
+    @Patch(':id')
+    @ApiOperation({ summary: 'Update a catalog by ID' })
+    @ApiParam({ name: 'id', type: Number })
+    @ApiBody({ type: UpdateCatalogDto })
+    update(@Param('id') id: number, @Body() dto: UpdateCatalogDto) {
+        return this.catalogService.updateCatalog(id, dto);
     }
 
     @Delete(':id')
