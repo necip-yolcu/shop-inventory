@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Catalog } from './catalog.entity';
+import { CreateCatalogDto } from './dto/create-catalog.dto';
 
 @Injectable()
 export class CatalogService {
@@ -14,7 +15,7 @@ export class CatalogService {
         return await this.catalogRepository.find({ relations: ['products'] });
     }
 
-    async create(catalog: Partial<Catalog>) {
+    async create(catalog: CreateCatalogDto) {
         const newCatalog = this.catalogRepository.create(catalog);
         return await this.catalogRepository.save(newCatalog);
     }
